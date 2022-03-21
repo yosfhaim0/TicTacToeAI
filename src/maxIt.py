@@ -57,7 +57,7 @@ def inputMove(s):
 
 def isFinished(s):
     # Returns True iff the game ended
-    return checkSeq(s) in [LOSS, VIC, TIE]
+    return s[1] in [LOSS, VIC, TIE]
 
 
 def isHumTurn(s):
@@ -77,19 +77,19 @@ def whoIsFirst(s):
 
 # s[5]=sunH
 # בודק האם יש ניצחון לאחד הצדדים
-def checkSeq(s):
+def checkIfFinish(s):
     if s[2] == HUMAN:
         for i in range(SIZE):
-            if s[0][i][s[3]] != EMPTY and s[0][i][s[3]] != CURSOR:
+            if s[0][i][s[4]] != EMPTY and s[0][i][s[4]] != CURSOR:
                 if s[5] > s[6]:
                     return s[6] - s[5]
                 elif s[5] < s[6]:
                     return s[6] - s[5]
                 else:
                     return 0.00001
-    if s[2] == COMPUTER:
+    if s[2]==COMPUTER:
         for i in range(SIZE):
-            if s[0][s[3]][i] != EMPTY and s[0][s[3]][i] != CURSOR:
+            if s[0][s[3]][i]!= EMPTY and s[0][s[3]][i] != CURSOR:
                 if s[5] > s[6]:
                     return s[6] - s[5]
                 elif s[5] < s[6]:
@@ -102,6 +102,23 @@ def checkSeq(s):
         return LOSS
     else:
         return TIE
+
+
+def makeMove(s, r, c):
+    if s[2] == HUMAN:
+        s[5] += + s[0][r][c]
+    elif s[2] == COMPUTER:
+        s[6] += s[0][r][c]
+    s[2] = abs(s[2] - 1)
+    s[0][s[3]][s[4]] = EMPTY
+    s[0][r][c] = CURSOR
+    s[3] = r
+    s[4] = c
+    t = checkIfFinish(s)
+    if t in [TIE, VIC, LOSS]:
+        s[1] = t
+    else:
+        s[1] += t
 
 
 def getNext(s):
@@ -125,23 +142,6 @@ def getNext(s):
 def value(s):
     # Returns the heuristic value of s
     return s[1]
-
-
-def makeMove(s, r, c):
-    if s[2] == HUMAN:
-        s[5] += + s[0][r][c]
-    elif s[2] == COMPUTER:
-        s[6] += s[0][r][c]
-    s[2] = abs(s[2] - 1)
-    s[0][s[3]][s[4]] = EMPTY
-    s[0][r][c] = CURSOR
-    s[3] = r
-    s[4] = c
-    t = checkSeq(s)
-    if t in [TIE, VIC, LOSS]:
-        s[1] = t
-    else:
-        s[1] += t
 
 
 def printState(s):
