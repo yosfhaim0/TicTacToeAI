@@ -1,6 +1,6 @@
 import copy
 
-SIZE = 8
+SIZE = 4
 COMPUTER = 0  # Marks the computer's cells on the board
 HUMAN = 1  # Marks the human's cells on the board
 valueMin = -99
@@ -44,23 +44,20 @@ def inputMove(s):
     flag = True
     while flag:
         r = int(input("Enter r: "))
-        c = int(input("Enter c: "))
-        if r < 0 or r >= SIZE or c < 0 or c >= SIZE:
+        if r < 0 or r >= SIZE:
             print("Ilegal move.")
-        elif s[3] != r and s[4] != c:
+        elif s[3] == r:
             print("Ilegal move.")
-        elif s[3] == r and s[4] == c:
-            print("Ilegal move.")
-        elif s[0][r][c] == EMPTY or s[0][r][c] == CURSOR:
+        elif s[0][r][s[4]] == EMPTY or s[0][r][s[4]] == CURSOR:
             print("Ilegal move.")
         else:
             flag = False
-            makeMove(s, r, c)
+            makeMove(s, r, s[4])
 
 
 def isFinished(s):
     # Returns True iff the game ended
-    return s[1] in [LOSS, VIC, TIE]
+    return checkSeq(s) in [LOSS, VIC, TIE]
 
 
 def isHumTurn(s):
@@ -70,6 +67,8 @@ def isHumTurn(s):
 
 def whoIsFirst(s):
     # The user decides who plays first
+    print("hello! Welcome to MaxIt!\n\
+    You always select the row and the computer in a column, good luck!")
     if int(input("Who plays first? 1-me / anything else-you. : ")) == 1:
         s[2] = COMPUTER
     else:
@@ -79,26 +78,24 @@ def whoIsFirst(s):
 # s[5]=sunH
 # בודק האם יש ניצחון לאחד הצדדים
 def checkSeq(s):
-    r = 0
-    c = 0
     if s[2] == HUMAN:
         for i in range(SIZE):
             if s[0][i][s[3]] != EMPTY and s[0][i][s[3]] != CURSOR:
                 if s[5] > s[6]:
-                    return -1
+                    return s[6] - s[5]
                 elif s[5] < s[6]:
-                    return 1
+                    return s[6] - s[5]
                 else:
-                    return 0
+                    return 0.00001
     if s[2] == COMPUTER:
         for i in range(SIZE):
             if s[0][s[3]][i] != EMPTY and s[0][s[3]][i] != CURSOR:
                 if s[5] > s[6]:
-                    return -1
+                    return s[6] - s[5]
                 elif s[5] < s[6]:
-                    return 1
+                    return s[6] - s[5]
                 else:
-                    return 0
+                    return 0.00001
     if s[5] < s[6]:
         return VIC
     elif s[5] > s[6]:
@@ -141,9 +138,8 @@ def makeMove(s, r, c):
     s[3] = r
     s[4] = c
     t = checkSeq(s)
-    if t in [VIC, LOSS]:
+    if t in [TIE, VIC, LOSS]:
         s[1] = t
-        return
     else:
         s[1] += t
 
@@ -170,7 +166,7 @@ def printState(s):
             else:
                 print(s[0][r][c], "|", end="")
     print("\n -- -- --\n")
-    print("hum: ", s[5], "  cum:  ", s[6])
+    print("hum score: ", s[5], "  cum score:  ", s[6])
     if value(s) == VIC:
         print("Ha ha ha I won!")
     elif value(s) == LOSS:
