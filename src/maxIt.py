@@ -3,7 +3,7 @@ import copy
 SIZE = 4
 COMPUTER = 0  # Marks the computer's cells on the board
 HUMAN = 1  # Marks the human's cells on the board
-valueMin = -99
+valueMin = -40
 valueMax = 99
 VIC = 10 ** 20  # The value of a winning board (for max)
 LOSS = -VIC  # The value of a losing board (for max)

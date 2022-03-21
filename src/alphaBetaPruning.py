@@ -1,7 +1,7 @@
 import maxIt
 import copy
 
-DEPTH = 3
+DEPTH = 55
 
 
 def go(s):
