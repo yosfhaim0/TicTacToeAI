@@ -1,17 +1,17 @@
 import copy
+import random
 
-SIZE = 4
+# Answer to the homework question at function "checkIfFinishElseHeuristics()"
+SIZE = 4  # size of the board
 COMPUTER = 0  # Marks the computer's cells on the board
 HUMAN = 1  # Marks the human's cells on the board
-valueMin = -40
-valueMax = 99
+valueMin = -5  # mini value of the game number
+valueMax = 15  # max value of the game number
 VIC = 10 ** 20  # The value of a winning board (for max)
 LOSS = -VIC  # The value of a losing board (for max)
 TIE = 0  # The value of a tie
-CURSOR = valueMax + 1
-EMPTY = CURSOR + 1
-
-import random
+CURSOR = valueMax + 1  # uniqe value on the board
+EMPTY = CURSOR + 1  # uniqe value on the board
 
 
 # return [board, 0.00001, HUMAN, r, c, sumH, sumC]
@@ -75,27 +75,30 @@ def whoIsFirst(s):
         s[2] == HUMAN
 
 
-# s[5]=sunH
-# בודק האם יש ניצחון לאחד הצדדים
-def checkIfFinish(s):
+# ********************Answer to the homework question************************
+# The heuristics are the computer score less the human score,
+# s[6]-s[5]
+# the logic is that when the computer score is high then the
+# heuristics is a positive number and when the human score is
+# high the number is negative,
+# I think a subtraction of the score represents the game well.
+# Checks if there is a win for one
+def checkIfFinishElseHeuristics(s):
     if s[2] == HUMAN:
         for i in range(SIZE):
             if s[0][i][s[4]] != EMPTY and s[0][i][s[4]] != CURSOR:
-                if s[5] > s[6]:
-                    return s[6] - s[5]
-                elif s[5] < s[6]:
-                    return s[6] - s[5]
-                else:
+                if s[5] == s[6]:
                     return 0.00001
-    if s[2]==COMPUTER:
+                else:
+                    return s[6]-s[5]
+    if s[2] == COMPUTER:
         for i in range(SIZE):
-            if s[0][s[3]][i]!= EMPTY and s[0][s[3]][i] != CURSOR:
-                if s[5] > s[6]:
-                    return s[6] - s[5]
-                elif s[5] < s[6]:
-                    return s[6] - s[5]
-                else:
+            if s[0][s[3]][i] != EMPTY and s[0][s[3]][i] != CURSOR:
+                if s[5] == s[6]:
                     return 0.00001
+                else:
+                    return s[6]-s[5]
+    # the game not finish
     if s[5] < s[6]:
         return VIC
     elif s[5] > s[6]:
@@ -105,22 +108,30 @@ def checkIfFinish(s):
 
 
 def makeMove(s, r, c):
+    # Add a score to whoever made the turn
     if s[2] == HUMAN:
         s[5] += + s[0][r][c]
     elif s[2] == COMPUTER:
         s[6] += s[0][r][c]
+    # The turn passes to the second
+    # example:
+    # if 1(human) then 1-1=0 ,
+    # if 0(cumputer) then |0-1|=1
     s[2] = abs(s[2] - 1)
+    # Mark on the board the change of step
     s[0][s[3]][s[4]] = EMPTY
     s[0][r][c] = CURSOR
+    # Change cursor position
     s[3] = r
     s[4] = c
-    t = checkIfFinish(s)
+    t = checkIfFinishElseHeuristics(s)
     if t in [TIE, VIC, LOSS]:
         s[1] = t
     else:
         s[1] += t
 
 
+# get the next Step of state
 def getNext(s):
     # returns a list of the next states of s
     ns = []
@@ -136,7 +147,13 @@ def getNext(s):
                 tmp = copy.deepcopy(s)
                 makeMove(tmp, s[3], c)
                 ns += [tmp]
+    ns.sort(key=keySort, reverse=True)
     return ns
+
+
+# key for sort the nextStep
+def keySort(s):
+    return s[1]
 
 
 def value(s):
@@ -173,8 +190,3 @@ def printState(s):
         print("You did it!")
     elif value(s) == TIE:
         print("It's a TIE")
-
-
-if __name__ == "__main__":
-    x = create()
-    printState(x)

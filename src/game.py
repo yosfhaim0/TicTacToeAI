@@ -141,3 +141,4 @@ def getNext(s):
                 makeMove(tmp, r, c)
                 ns += [tmp]
     return ns
+
