@@ -87,17 +87,11 @@ def checkIfFinishElseHeuristics(s):
     if s[2] == HUMAN:
         for i in range(SIZE):
             if s[0][i][s[4]] != EMPTY and s[0][i][s[4]] != CURSOR:
-                if s[5] == s[6]:
-                    return 0.00001
-                else:
-                    return s[6]-s[5]
+                return huristic(s)
     if s[2] == COMPUTER:
         for i in range(SIZE):
             if s[0][s[3]][i] != EMPTY and s[0][s[3]][i] != CURSOR:
-                if s[5] == s[6]:
-                    return 0.00001
-                else:
-                    return s[6]-s[5]
+                return huristic(s)
     # the game not finish
     if s[5] < s[6]:
         return VIC
@@ -106,6 +100,12 @@ def checkIfFinishElseHeuristics(s):
     else:
         return TIE
 
+
+def huristic(s):
+    if s[5] == s[6]:
+        return 0.00001
+    else:
+        return s[6]-s[5]
 
 def makeMove(s, r, c):
     # Add a score to whoever made the turn
@@ -128,7 +128,7 @@ def makeMove(s, r, c):
     if t in [TIE, VIC, LOSS]:
         s[1] = t
     else:
-        s[1] += t
+        s[1] = t
 
 
 # get the next Step of state
@@ -147,13 +147,8 @@ def getNext(s):
                 tmp = copy.deepcopy(s)
                 makeMove(tmp, s[3], c)
                 ns += [tmp]
-    ns.sort(key=keySort, reverse=True)
+    ns.sort(key=value, reverse=True)
     return ns
-
-
-# key for sort the nextStep
-def keySort(s):
-    return s[1]
 
 
 def value(s):
